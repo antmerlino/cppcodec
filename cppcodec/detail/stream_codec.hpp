@@ -353,7 +353,9 @@ inline void stream_codec<Codec, CodecVariant>::decode(
     }
 
     if (alphabet_index_info<CodecVariant>::is_invalid(*alphabet_index_ptr)) {
+#ifndef DISABLE_EXCEPTIONS
         throw symbol_error(*src);
+#endif
     }
     ++src;
 
@@ -362,7 +364,9 @@ inline void stream_codec<Codec, CodecVariant>::decode(
         if (last_index_ptr == alphabet_index_start) {
             // Don't accept padding at the start of a block.
             // The encoder should have omitted that padding altogether.
+#ifndef DISABLE_EXCEPTIONS
             throw padding_error();
+#endif
         }
         // We're in here because we just read a (first) padding character. Try to read more.
         // Count with last_index_ptr, but store in alphabet_index_ptr so we don't
@@ -376,12 +380,16 @@ inline void stream_codec<Codec, CodecVariant>::decode(
                 break;
             }
             if (!alphabet_index_info<CodecVariant>::is_padding(*alphabet_index_ptr)) {
+#ifndef DISABLE_EXCEPTIONS
                 throw padding_error();
+#endif
             }
 
             ++last_index_ptr;
             if (last_index_ptr > alphabet_index_end) {
+#ifndef DISABLE_EXCEPTIONS
                 throw padding_error();
+#endif
             }
         }
     }
@@ -392,7 +400,9 @@ inline void stream_codec<Codec, CodecVariant>::decode(
                     ) && last_index_ptr != alphabet_index_end)
         {
             // If the input is not a multiple of the block size then the input is incorrect.
+#ifndef DISABLE_EXCEPTIONS
             throw padding_error();
+#endif
         }
         if (alphabet_index_ptr >= alphabet_index_end) {
             abort();

@@ -51,7 +51,11 @@ public:
     {
         return (num_bytes == 1) ? 2    // 2 symbols, 2 padding characters
                 : (num_bytes == 2) ? 3 // 3 symbols, 1 padding character
+#ifndef DISABLE_EXCEPTIONS
                 : throw std::domain_error("invalid number of bytes in a tail block");
+#else
+                : 0;
+#endif
     }
 
     template <uint8_t I>
@@ -82,7 +86,9 @@ public:
     static CPPCODEC_ALWAYS_INLINE uint8_if<I != 1 && I != 2> index_last(
             const uint8_t* /*binary block*/)
     {
+#ifndef DISABLE_EXCEPTIONS
         throw std::domain_error("invalid last encoding symbol index in a tail");
+#endif
     }
 
     template <typename Result, typename ResultState>
@@ -112,8 +118,10 @@ CPPCODEC_ALWAYS_INLINE void base64<CodecVariant>::decode_tail(
         Result& decoded, ResultState& state, const alphabet_index_t* idx, size_t idx_len)
 {
     if (idx_len == 1) {
+#ifndef DISABLE_EXCEPTIONS
         throw invalid_input_length(
                 "invalid number of symbols in last base64 block: found 1, expected 2 or 3");
+#endif
     }
 
     // idx_len == 2: decoded size 1

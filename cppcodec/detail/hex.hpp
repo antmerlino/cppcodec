@@ -77,7 +77,9 @@ public:
     static CPPCODEC_ALWAYS_INLINE uint8_if<I != 0> index_last(
             const uint8_t* /*binary block*/)
     {
+#ifndef DISABLE_EXCEPTIONS
         throw std::domain_error("invalid last encoding symbol index in a tail");
+#endif
     }
 
     template <typename Result, typename ResultState>
@@ -103,9 +105,11 @@ template <typename Result, typename ResultState>
 CPPCODEC_ALWAYS_INLINE void hex<CodecVariant>::decode_tail(
         Result&, ResultState&, const alphabet_index_t*, size_t)
 {
+#ifndef DISABLE_EXCEPTIONS
     throw invalid_input_length(
             "odd-length hex input is not supported by the streaming octet decoder, "
             "use a place-based number decoder instead");
+#endif
 }
 
 } // namespace detail
